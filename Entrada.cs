@@ -158,7 +158,7 @@ namespace BackUtilsoftcom
                             progressBarBackup.Value = progress;
 
                         }));
-                    });
+                    }, chB_BackupEmNuvem.Checked);
 
 
                 LinkBkpText = backup.GetCaminhoPastaBackup();

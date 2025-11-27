@@ -37,7 +37,7 @@ namespace BackUtilsoftcom
         {
             return Path.GetFileName(_caminhoArquivoZip);
         }
-        public async Task RealizarBackup (Action<int, string> onProgress)
+        public async Task RealizarBackup(Action<int, string> onProgress, bool enviarnuvem)
         {
             if (onProgress != null) onProgress.Invoke(10, "Iniciando backup...");
 
@@ -54,16 +54,17 @@ namespace BackUtilsoftcom
 
             if (onProgress != null) onProgress.Invoke(40, "Backup do Access concluído.");
 
-            if (onProgress != null) onProgress.Invoke(50, "Iniciando backup do SQL Server...");
+            if (onProgress != null) onProgress.Invoke(45, "Iniciando backup do SQL Server...");
             _sqlBackupService.ExecutarBackup(infoSeguranca, _caminhoPastaBackup);
-            if (onProgress != null) onProgress.Invoke(65, "Backup do SQL Server concluído.");
+            if (onProgress != null) onProgress.Invoke(50, "Backup do SQL Server concluído.");
 
-            if (onProgress != null) onProgress.Invoke(75, "Compactando arquivos...");
+            if (onProgress != null) onProgress.Invoke(60, "Compactando arquivos...");
             CompactarTudoEmZip(_caminhoMdb);
 
-            if (onProgress != null) onProgress.Invoke(75, "Enviando arquivos para nuvem...");
-            await enviarCloudflire();
-
+            if (enviarnuvem) { 
+                if (onProgress != null) onProgress.Invoke(75, "Enviando arquivos para nuvem...");
+                await enviarCloudflire();
+            }
             _logger.Log("✅ Backup Finalizado.");
             if (onProgress != null) onProgress.Invoke(100, "Backup Finalizado!");
         }
