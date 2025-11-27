@@ -77,8 +77,9 @@ namespace BackUtilsoftcom.Core
                         cmd.ExecuteNonQuery();
                     }
 
-                    _logger.Log("✅ Backup concluído com sucesso!");
+                    _logger.Log($"Backup da base {info.SqlBase} concluído com sucesso!");
                     _logger.Log(string.Format("📁 Arquivo gerado em: {0}", caminhoArquivo));
+                    _logger.Log("-------------------------------------------------");
                 }
 
                 return true;

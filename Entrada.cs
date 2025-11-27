@@ -135,7 +135,7 @@ namespace BackUtilsoftcom
         }
 
 
-        private  void btnIniciarCopia_Click(object sender, EventArgs e)
+        private async void btnIniciarCopia_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TxLocalFront.Text))
             {
@@ -150,7 +150,7 @@ namespace BackUtilsoftcom
             {
                 var backup = new BackupManager(this, TxLocalFront.Text);
 
-                 backup.RealizarBackup((progress, status) =>
+                await backup.RealizarBackup((progress, status) =>
                     {
                         // Atualiza UI na thread principal
                         this.Invoke(new Action(() =>
@@ -202,12 +202,10 @@ namespace BackUtilsoftcom
             }
 
         }
-
         private void btnFechar_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
- 
         private void lblLinckNuvem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Clipboard.SetText(lblLinckNuvem.Text);

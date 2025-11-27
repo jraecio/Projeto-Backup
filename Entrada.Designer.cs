@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Entrada));
             this.panelContainer = new System.Windows.Forms.Panel();
+            this.chB_BackupEmNuvem = new System.Windows.Forms.CheckBox();
+            this.lblLinckNuvem = new System.Windows.Forms.LinkLabel();
             this.lblLinkBkp = new System.Windows.Forms.LinkLabel();
             this.progressBarBackup = new System.Windows.Forms.ProgressBar();
             this.txtLog = new System.Windows.Forms.TextBox();
@@ -38,11 +40,9 @@
             this.lblLocalTx = new System.Windows.Forms.Label();
             this.TxLocalFront = new System.Windows.Forms.TextBox();
             this.btnSelecionarFront = new System.Windows.Forms.Button();
+            this.gpBoxTipoOperacao = new System.Windows.Forms.GroupBox();
             this.gpBoxIniciarCopia = new System.Windows.Forms.GroupBox();
             this.btnIniciarCopia = new System.Windows.Forms.Button();
-            this.lblLinckNuvem = new System.Windows.Forms.LinkLabel();
-            this.gpBoxTipoOperacao = new System.Windows.Forms.GroupBox();
-            this.chB_BackupEmNuvem = new System.Windows.Forms.CheckBox();
             this.panelContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.gpBoxLocalFront.SuspendLayout();
@@ -63,9 +63,31 @@
             this.panelContainer.Controls.Add(this.gpBoxIniciarCopia);
             this.panelContainer.Location = new System.Drawing.Point(8, 9);
             this.panelContainer.Name = "panelContainer";
-            this.panelContainer.Size = new System.Drawing.Size(500, 420);
+            this.panelContainer.Size = new System.Drawing.Size(500, 463);
             this.panelContainer.TabIndex = 1;
             this.panelContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.panelContainer_Paint);
+            // 
+            // chB_BackupEmNuvem
+            // 
+            this.chB_BackupEmNuvem.AutoSize = true;
+            this.chB_BackupEmNuvem.Checked = true;
+            this.chB_BackupEmNuvem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chB_BackupEmNuvem.Location = new System.Drawing.Point(35, 175);
+            this.chB_BackupEmNuvem.Name = "chB_BackupEmNuvem";
+            this.chB_BackupEmNuvem.Size = new System.Drawing.Size(117, 17);
+            this.chB_BackupEmNuvem.TabIndex = 12;
+            this.chB_BackupEmNuvem.Text = "Backup em Nuvem";
+            this.chB_BackupEmNuvem.UseVisualStyleBackColor = true;
+            // 
+            // lblLinckNuvem
+            // 
+            this.lblLinckNuvem.AutoSize = true;
+            this.lblLinckNuvem.LinkColor = System.Drawing.Color.Orange;
+            this.lblLinckNuvem.Location = new System.Drawing.Point(20, 325);
+            this.lblLinckNuvem.Name = "lblLinckNuvem";
+            this.lblLinckNuvem.Size = new System.Drawing.Size(0, 13);
+            this.lblLinckNuvem.TabIndex = 11;
+            this.lblLinckNuvem.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblLinckNuvem_LinkClicked);
             // 
             // lblLinkBkp
             // 
@@ -91,12 +113,12 @@
             this.txtLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtLog.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.txtLog.ForeColor = System.Drawing.Color.Gray;
-            this.txtLog.Location = new System.Drawing.Point(20, 370);
+            this.txtLog.Location = new System.Drawing.Point(20, 366);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(460, 40);
+            this.txtLog.Size = new System.Drawing.Size(460, 90);
             this.txtLog.TabIndex = 7;
             // 
             // picLogo
@@ -154,6 +176,17 @@
             this.btnSelecionarFront.UseVisualStyleBackColor = false;
             this.btnSelecionarFront.Click += new System.EventHandler(this.btnSelecionarFront_Click);
             // 
+            // gpBoxTipoOperacao
+            // 
+            this.gpBoxTipoOperacao.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.gpBoxTipoOperacao.ForeColor = System.Drawing.Color.DimGray;
+            this.gpBoxTipoOperacao.Location = new System.Drawing.Point(20, 150);
+            this.gpBoxTipoOperacao.Name = "gpBoxTipoOperacao";
+            this.gpBoxTipoOperacao.Size = new System.Drawing.Size(460, 60);
+            this.gpBoxTipoOperacao.TabIndex = 3;
+            this.gpBoxTipoOperacao.TabStop = false;
+            this.gpBoxTipoOperacao.Text = "Tipo de Operação";
+            // 
             // gpBoxIniciarCopia
             // 
             this.gpBoxIniciarCopia.Controls.Add(this.btnIniciarCopia);
@@ -181,44 +214,12 @@
             this.btnIniciarCopia.UseVisualStyleBackColor = false;
             this.btnIniciarCopia.Click += new System.EventHandler(this.btnIniciarCopia_Click);
             // 
-            // lblLinckNuvem
-            // 
-            this.lblLinckNuvem.AutoSize = true;
-            this.lblLinckNuvem.Location = new System.Drawing.Point(17, 325);
-            this.lblLinckNuvem.Name = "lblLinckNuvem";
-            this.lblLinckNuvem.Size = new System.Drawing.Size(0, 13);
-            this.lblLinckNuvem.TabIndex = 11;
-            this.lblLinckNuvem.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblLinckNuvem_LinkClicked);
-            // 
-            // gpBoxTipoOperacao
-            // 
-            this.gpBoxTipoOperacao.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.gpBoxTipoOperacao.ForeColor = System.Drawing.Color.DimGray;
-            this.gpBoxTipoOperacao.Location = new System.Drawing.Point(20, 150);
-            this.gpBoxTipoOperacao.Name = "gpBoxTipoOperacao";
-            this.gpBoxTipoOperacao.Size = new System.Drawing.Size(460, 60);
-            this.gpBoxTipoOperacao.TabIndex = 3;
-            this.gpBoxTipoOperacao.TabStop = false;
-            this.gpBoxTipoOperacao.Text = "Tipo de Operação";
-            // 
-            // chB_BackupEmNuvem
-            // 
-            this.chB_BackupEmNuvem.AutoSize = true;
-            this.chB_BackupEmNuvem.Checked = true;
-            this.chB_BackupEmNuvem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chB_BackupEmNuvem.Location = new System.Drawing.Point(35, 175);
-            this.chB_BackupEmNuvem.Name = "chB_BackupEmNuvem";
-            this.chB_BackupEmNuvem.Size = new System.Drawing.Size(117, 17);
-            this.chB_BackupEmNuvem.TabIndex = 12;
-            this.chB_BackupEmNuvem.Text = "Backup em Nuvem";
-            this.chB_BackupEmNuvem.UseVisualStyleBackColor = true;
-            // 
             // Entrada
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(516, 437);
+            this.ClientSize = new System.Drawing.Size(516, 484);
             this.Controls.Add(this.panelContainer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Entrada";

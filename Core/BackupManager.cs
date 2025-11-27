@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace BackUtilsoftcom
 {
@@ -36,7 +37,7 @@ namespace BackUtilsoftcom
         {
             return Path.GetFileName(_caminhoArquivoZip);
         }
-        public void RealizarBackup(Action<int, string> onProgress)
+        public async Task RealizarBackup (Action<int, string> onProgress)
         {
             if (onProgress != null) onProgress.Invoke(10, "Iniciando backup...");
 
@@ -61,7 +62,7 @@ namespace BackUtilsoftcom
             CompactarTudoEmZip(_caminhoMdb);
 
             if (onProgress != null) onProgress.Invoke(75, "Enviando arquivos para nuvem...");
-             enviarCloudflire();
+            await enviarCloudflire();
 
             _logger.Log("✅ Backup Finalizado.");
             if (onProgress != null) onProgress.Invoke(100, "Backup Finalizado!");
@@ -95,8 +96,6 @@ namespace BackUtilsoftcom
 
                 // Cria o arquivo zip
                 ZipFile.CreateFromDirectory(_caminhoPastaBackup, _caminhoArquivoZip, CompressionLevel.Optimal, includeBaseDirectory: false);
-
-                _logger.Log("-------------------------------------------------");
                 _logger.Log("🎉 Compactação concluída com sucesso!");
                 _logger.Log(string.Format("📁 Arquivo gerado: {0}", _caminhoArquivoZip));
                 _logger.Log("-------------------------------------------------");
@@ -107,8 +106,9 @@ namespace BackUtilsoftcom
             }
         }
 
-        private  void enviarCloudflire()
+        private async Task enviarCloudflire()
         {
+            _logger.Log("Enviando arquivo para nuvem");
             var cfg = new CloudflareConfig
             {
                 Endpoint = "https://9f2c0aa4f354e316da08c86b629f9d13.r2.cloudflarestorage.com",
@@ -119,11 +119,20 @@ namespace BackUtilsoftcom
                 FilePath = $@"{_caminhoArquivoZip}"
             };
 
-             CloudflareApi.UploadFile(cfg);
+            var result = await CloudflareApi.UploadFileAsync(cfg);
 
-            _logger.Log("-------------------------------------------------");
-            _logger.Log("📦 arquivo salvo em nuvem");
-            _logger.Log("-------------------------------------------------");
+            if (result.Item1)
+            {
+                _logger.Log("📦 arquivo salvo em nuvem");
+                _logger.Log("-------------------------------------------------");
+            }
+            else
+            { 
+                _logger.Log("FALHOU!");
+                _logger.Log("Código HTTP: " + result.Item2);
+                _logger.Log("Erro: " + result.Item3);
+                _logger.Log("-------------------------------------------------");
+            }
         }
     }
 }

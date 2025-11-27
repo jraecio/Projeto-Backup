@@ -10,81 +10,179 @@ namespace BackUtilsoftcom.Core
 {
     public static class CloudflareApi
     {
-        public static bool UploadFile(CloudflareConfig cfg)
-        {
-            return UploadFileAsync(cfg).GetAwaiter().GetResult();
-        }
-        public static async Task<bool> UploadFileAsync(CloudflareConfig cfg)
-        {
-            byte[] fileBytes = File.ReadAllBytes(cfg.FilePath);
 
-            string url = $"{cfg.Endpoint}/{cfg.Bucket}/{cfg.ObjectKey}";
-            string contentType = "application/octet-stream";
+        //public static async Task<bool> UploadFileAsync(CloudflareConfig cfg)
+        //{
+        //    byte[] fileBytes = File.ReadAllBytes(cfg.FilePath);
 
-            using (var client = new HttpClient())
-            using (var request = new HttpRequestMessage(HttpMethod.Put, url))
-            {
-                var content = new ByteArrayContent(fileBytes);
-                content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-                request.Content = content;
+        //    string url = $"{cfg.Endpoint}/{cfg.Bucket}/{cfg.ObjectKey}";
+        //    string contentType = "application/octet-stream";
 
-                // --- AWS Signature V4 ---
-                string region = "auto";
-                string service = "s3";
-                DateTime now = DateTime.UtcNow;
-                string amzDate = now.ToString("yyyyMMddTHHmmssZ");
-                string dateStamp = now.ToString("yyyyMMdd");
+        //    using (var client = new HttpClient())
+        //    using (var request = new HttpRequestMessage(HttpMethod.Put, url))
+        //    {
+        //        var content = new ByteArrayContent(fileBytes);
+        //        content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        //        request.Content = content;
 
-                string payloadHash = ToHexString(SHA256Hash(fileBytes));
-                string canonicalUri = $"/{cfg.Bucket}/{cfg.ObjectKey}";
-                string canonicalQuery = "";
+        //        // --- AWS Signature V4 ---
+        //        string region = "auto";
+        //        string service = "s3";
+        //        DateTime now = DateTime.UtcNow;
+        //        string amzDate = now.ToString("yyyyMMddTHHmmssZ");
+        //        string dateStamp = now.ToString("yyyyMMdd");
 
-                string canonicalHeaders =
-                    $"content-type:{contentType}\n" +
-                    $"host:{new Uri(url).Host}\n" +
-                    $"x-amz-content-sha256:{payloadHash}\n" +
-                    $"x-amz-date:{amzDate}\n";
+        //        string payloadHash = ToHexString(SHA256Hash(fileBytes));
+        //        string canonicalUri = $"/{cfg.Bucket}/{cfg.ObjectKey}";
+        //        string canonicalQuery = "";
 
-                string signedHeaders =
-                    "content-type;host;x-amz-content-sha256;x-amz-date";
+        //        string canonicalHeaders =
+        //            $"content-type:{contentType}\n" +
+        //            $"host:{new Uri(url).Host}\n" +
+        //            $"x-amz-content-sha256:{payloadHash}\n" +
+        //            $"x-amz-date:{amzDate}\n";
 
-                string canonicalRequest =
-                    "PUT\n" +
-                    canonicalUri + "\n" +
-                    canonicalQuery + "\n" +
-                    canonicalHeaders + "\n" +
-                    signedHeaders + "\n" +
-                    payloadHash;
+        //        string signedHeaders =
+        //            "content-type;host;x-amz-content-sha256;x-amz-date";
 
-                string algorithm = "AWS4-HMAC-SHA256";
-                string credentialScope = $"{dateStamp}/{region}/{service}/aws4_request";
+        //        string canonicalRequest =
+        //            "PUT\n" +
+        //            canonicalUri + "\n" +
+        //            canonicalQuery + "\n" +
+        //            canonicalHeaders + "\n" +
+        //            signedHeaders + "\n" +
+        //            payloadHash;
 
-                string stringToSign =
-                    algorithm + "\n" +
-                    amzDate + "\n" +
-                    credentialScope + "\n" +
-                    ToHexString(SHA256Hash(Encoding.UTF8.GetBytes(canonicalRequest)));
+        //        string algorithm = "AWS4-HMAC-SHA256";
+        //        string credentialScope = $"{dateStamp}/{region}/{service}/aws4_request";
 
-                byte[] signingKey = GetSignatureKey(cfg.SecretKey, dateStamp, region, service);
-                string signature = ToHexString(HMACSHA256(signingKey, stringToSign));
+        //        string stringToSign =
+        //            algorithm + "\n" +
+        //            amzDate + "\n" +
+        //            credentialScope + "\n" +
+        //            ToHexString(SHA256Hash(Encoding.UTF8.GetBytes(canonicalRequest)));
 
-                string authorization =
-                    $"{algorithm} Credential={cfg.AccessKey}/{credentialScope}, " +
-                    $"SignedHeaders={signedHeaders}, Signature={signature}";
+        //        byte[] signingKey = GetSignatureKey(cfg.SecretKey, dateStamp, region, service);
+        //        string signature = ToHexString(HMACSHA256(signingKey, stringToSign));
 
-                // Headers finais
-                request.Headers.Add("x-amz-date", amzDate);
-                request.Headers.Add("x-amz-content-sha256", payloadHash);
-                request.Headers.TryAddWithoutValidation("Authorization", authorization);
+        //        string authorization =
+        //            $"{algorithm} Credential={cfg.AccessKey}/{credentialScope}, " +
+        //            $"SignedHeaders={signedHeaders}, Signature={signature}";
 
-                var response = await client.SendAsync(request);
-                return response.IsSuccessStatusCode;
-            }
-        }
+        //        // Headers finais
+        //        request.Headers.Add("x-amz-date", amzDate);
+        //        request.Headers.Add("x-amz-content-sha256", payloadHash);
+        //        request.Headers.TryAddWithoutValidation("Authorization", authorization);
+
+        //        var response = await client.SendAsync(request);
+        //        return response.IsSuccessStatusCode;
+        //    }
+        //}
 
         // ============================================================
         //               MÉTODOS AUXILIARES .NET 4.7.2
         // ============================================================
+        public static async Task<Tuple<bool, int, string>> UploadFileAsync(CloudflareConfig cfg)
+        {
+            try
+            {
+                if (!File.Exists(cfg.FilePath))
+                    return Tuple.Create(false, 0, "Arquivo não encontrado.");
+
+                byte[] fileBytes = File.ReadAllBytes(cfg.FilePath);
+
+                string url = $"{cfg.Endpoint}/{cfg.Bucket}/{cfg.ObjectKey}";
+                string contentType = "application/octet-stream";
+
+                using (var client = new HttpClient())
+                using (var request = new HttpRequestMessage(HttpMethod.Put, url))
+                {
+                    var content = new ByteArrayContent(fileBytes);
+                    content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                    request.Content = content;
+
+                    // -----------------------------
+                    // AWS Signature V4
+                    // -----------------------------
+                    string region = "auto";
+                    string service = "s3";
+                    DateTime now = DateTime.UtcNow;
+                    string amzDate = now.ToString("yyyyMMddTHHmmssZ");
+                    string dateStamp = now.ToString("yyyyMMdd");
+
+                    string payloadHash = ToHexString(SHA256Hash(fileBytes));
+                    string canonicalUri = $"/{cfg.Bucket}/{cfg.ObjectKey}";
+
+                    string canonicalHeaders =
+                        $"content-type:{contentType}\n" +
+                        $"host:{new Uri(url).Host}\n" +
+                        $"x-amz-content-sha256:{payloadHash}\n" +
+                        $"x-amz-date:{amzDate}\n";
+
+                    string signedHeaders =
+                        "content-type;host;x-amz-content-sha256;x-amz-date";
+
+                    string canonicalRequest =
+                        "PUT\n" +
+                        canonicalUri + "\n" +
+                        "\n" +
+                        canonicalHeaders + "\n" +
+                        signedHeaders + "\n" +
+                        payloadHash;
+
+                    string algorithm = "AWS4-HMAC-SHA256";
+                    string credentialScope = $"{dateStamp}/{region}/{service}/aws4_request";
+
+                    string stringToSign =
+                        algorithm + "\n" +
+                        amzDate + "\n" +
+                        credentialScope + "\n" +
+                        ToHexString(SHA256Hash(Encoding.UTF8.GetBytes(canonicalRequest)));
+
+                    byte[] signingKey = GetSignatureKey(cfg.SecretKey, dateStamp, region, service);
+                    string signature = ToHexString(HMACSHA256(signingKey, stringToSign));
+
+                    string authorization =
+                        $"{algorithm} Credential={cfg.AccessKey}/{credentialScope}, " +
+                        $"SignedHeaders={signedHeaders}, Signature={signature}";
+
+                    request.Headers.Add("x-amz-date", amzDate);
+                    request.Headers.Add("x-amz-content-sha256", payloadHash);
+                    request.Headers.TryAddWithoutValidation("Authorization", authorization);
+
+                    // -----------------------------
+                    // Envio da requisição
+                    // -----------------------------
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    string body = await response.Content.ReadAsStringAsync();
+                    int statusCode = (int)response.StatusCode;
+
+                    // sucesso (Cloudflare geralmente retorna 200, 204, 201)
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Tuple.Create(true, statusCode,
+                            string.IsNullOrWhiteSpace(body) ? "Upload realizado com sucesso." : body);
+                    }
+
+                    // erro vindo do servidor
+                    return Tuple.Create(false, statusCode,
+                        $"Erro do servidor Cloudflare (HTTP {statusCode}). Detalhes: {body}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Erro de rede, DNS, conexão...
+                return Tuple.Create(false, -1, "Erro de rede: " + ex.Message);
+            }
+            catch (TaskCanceledException ex)
+            {
+                return Tuple.Create(false, -1, "Timeout na requisição: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Tuple.Create(false, -1, "Erro inesperado: " + ex.Message);
+            }
+        }
 
         private static byte[] SHA256Hash(byte[] data)
         {
@@ -93,7 +191,6 @@ namespace BackUtilsoftcom.Core
                 return sha.ComputeHash(data);
             }
         }
-
         private static byte[] HMACSHA256(byte[] key, string data)
         {
             using (var hmac = new HMACSHA256(key))
@@ -101,7 +198,6 @@ namespace BackUtilsoftcom.Core
                 return hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
             }
         }
-
         private static byte[] GetSignatureKey(string secretKey, string dateStamp, string region, string service)
         {
             byte[] kDate = HMACSHA256(Encoding.UTF8.GetBytes("AWS4" + secretKey), dateStamp);
@@ -110,7 +206,6 @@ namespace BackUtilsoftcom.Core
             byte[] kSigning = HMACSHA256(kService, "aws4_request");
             return kSigning;
         }
-
         private static string ToHexString(byte[] bytes)
         {
             var sb = new StringBuilder(bytes.Length * 2);

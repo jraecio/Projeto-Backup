@@ -14,9 +14,8 @@ namespace BackUtilsoftcom.Core
 
         public DatabaseConnectionInfo ProcessarBackupAccess(string caminhoMdb)
         {
-            _logger.Log("-------------------------------------------------");
+
             _logger.Log("🔧 Iniciando backup do arquivo MDB...");
-            _logger.Log("-------------------------------------------------");
 
             var helper = new AccessBackupHandler(_logger, caminhoMdb);
 
@@ -42,6 +41,7 @@ namespace BackUtilsoftcom.Core
             }
 
             _logger.Log("✅ Backup e compactação do MDB concluídos.");
+            _logger.Log("-------------------------------------------------");
             return info;
         }
     }

@@ -63,36 +63,6 @@ namespace BackUtilsoftcom.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BtnAdd30x30 {
-            get {
-                object obj = ResourceManager.GetObject("BtnAdd30x30", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap BtnConfirmar {
-            get {
-                object obj = ResourceManager.GetObject("BtnConfirmar", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap BtnFechar84x84 {
-            get {
-                object obj = ResourceManager.GetObject("BtnFechar84x84", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap Logo_Softcom_Pequena {
             get {
                 object obj = ResourceManager.GetObject("Logo_Softcom_Pequena", resourceCulture);
