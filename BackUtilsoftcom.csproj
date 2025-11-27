@@ -70,13 +70,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\BackupServiceAccess.cs" />
-    <Compile Include="Core\BackupHandlerAccess.cs" />
+    <Compile Include="Core\AccessBackupService.cs" />
+    <Compile Include="Core\AccessBackupHandler.cs" />
     <Compile Include="Core\BackupManager.cs" />
     <Compile Include="Core\BackupSettings.cs" />
     <Compile Include="Core\IBackupLogger.cs" />
     <Compile Include="Core\DatabaseConnectionInfo.cs" />
-    <Compile Include="Core\BackupServiceSql.cs" />
+    <Compile Include="Core\SqlBackupService.cs" />
     <Compile Include="Entrada.cs">
       <SubType>Form</SubType>
     </Compile>

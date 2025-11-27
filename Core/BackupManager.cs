@@ -8,8 +8,8 @@ namespace BackUtilsoftcom
     internal class BackupManager
     {
         private readonly IBackupLogger _logger;
-        private readonly BackupServiceAccess _accessBackupService;
-        private readonly BackupServiceSql _sqlBackupService;
+        private readonly AccessBackupService _accessBackupService;
+        private readonly SqlBackupService _sqlBackupService;
         private string _caminhoMdb;
         private string _caminhoPastaBackup;
 
@@ -22,8 +22,8 @@ namespace BackUtilsoftcom
             _caminhoPastaBackup = new BackupSettings(_logger, caminhoMdb).GetBackupFolder();
 
             // Dependências separadas e claras
-            _accessBackupService = new BackupServiceAccess(logger);
-            _sqlBackupService = new BackupServiceSql(logger);
+            _accessBackupService = new AccessBackupService(logger);
+            _sqlBackupService = new SqlBackupService(logger);
         }
 
         public string GetCaminhoPastaBackup()

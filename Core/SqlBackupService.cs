@@ -7,14 +7,14 @@ namespace BackUtilsoftcom.Core
 {
     public class SqlBackupService
     {
-        private readonly ILogger _logger;
+        private readonly IBackupLogger _logger;
 
-        public SqlBackupService(ILogger logger)
+        public SqlBackupService(IBackupLogger logger)
         {
             _logger = logger;
         }
 
-        public bool ExecutarBackup(InfoSeguranca info)
+        public bool ExecutarBackup(DatabaseConnectionInfo info, string pastaBackup)
         {
             try
             {
@@ -38,16 +38,14 @@ namespace BackUtilsoftcom.Core
                 // Monta servidor + porta
                 string servidorCompleto = info.SqlServidor;
                 if (!string.IsNullOrWhiteSpace(info.SqlPorta))
-                    servidorCompleto += $",{info.SqlPorta}";
+                    servidorCompleto += "," + info.SqlPorta;
 
                 // String de conexão
                 string connectionString =
-                    $"Server={servidorCompleto};" +
-                    $"Database={info.SqlBase};" +
-                    $"User Id={info.SqlLogin};" +
-                    $"Password={info.SqlSenha};";
+                    string.Format("Server={0};Database={1};User Id={2};Password={3};",
+                    servidorCompleto, info.SqlBase, info.SqlLogin, info.SqlSenha);
 
-                _logger.Log($"Conectando ao SQL Server: {servidorCompleto} ...");
+                _logger.Log(string.Format("Conectando ao SQL Server: {0} ...", servidorCompleto));
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -55,25 +53,21 @@ namespace BackUtilsoftcom.Core
                     _logger.Log("Conexão com SQL Server estabelecida com sucesso.");
 
                     // Pasta destino: dentro da pasta do EXE
-                    string pastaBackup = Path.Combine(
-                        AppDomain.CurrentDomain.BaseDirectory,
-                        "BackUtilsoftcom");
 
                     if (!Directory.Exists(pastaBackup))
                     {
                         Directory.CreateDirectory(pastaBackup);
-                        _logger.Log($"Criando pasta de backup: {pastaBackup}");
+                        _logger.Log(string.Format("Criando pasta de backup: {0}", pastaBackup));
                     }
 
                     string data = DateTime.Now.ToString("ddMMyy");
-                    string nomeArquivo = $"{info.SqlBase}-bkp-{data}.bak";
+                    string nomeArquivo = string.Format("{0}-bkp-{1}.bak", info.SqlBase, data);
                     string caminhoArquivo = Path.Combine(pastaBackup, nomeArquivo);
 
-                    _logger.Log($"Arquivo de destino: {caminhoArquivo}");
+                    _logger.Log(string.Format("Arquivo de destino: {0}", caminhoArquivo));
 
                     string sqlCommand =
-                        $"BACKUP DATABASE [{info.SqlBase}] TO DISK = '{caminhoArquivo}' " +
-                        $"WITH INIT, SKIP, STATS = 10;";
+                        string.Format("BACKUP DATABASE [{0}] TO DISK = '{1}' WITH INIT, SKIP, STATS = 10;", info.SqlBase, caminhoArquivo);
 
                     _logger.Log("Executando comando BACKUP DATABASE...");
 
@@ -84,7 +78,7 @@ namespace BackUtilsoftcom.Core
                     }
 
                     _logger.Log("✅ Backup concluído com sucesso!");
-                    _logger.Log($"📁 Arquivo gerado em: {caminhoArquivo}");
+                    _logger.Log(string.Format("📁 Arquivo gerado em: {0}", caminhoArquivo));
                 }
 
                 return true;

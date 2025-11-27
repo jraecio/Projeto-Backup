@@ -5,20 +5,20 @@ namespace BackUtilsoftcom.Core
 {
     public class AccessBackupService
     {
-        private readonly ILogger _logger;
+        private readonly IBackupLogger _logger;
 
-        public AccessBackupService(ILogger logger)
+        public AccessBackupService(IBackupLogger logger)
         {
             _logger = logger;
         }
 
-        public InfoSeguranca ProcessarBackupAccess(string caminhoMdb)
+        public DatabaseConnectionInfo ProcessarBackupAccess(string caminhoMdb)
         {
             _logger.Log("-------------------------------------------------");
             _logger.Log("🔧 Iniciando backup do arquivo MDB...");
             _logger.Log("-------------------------------------------------");
 
-            var helper = new AccessHelper(_logger, caminhoMdb);
+            var helper = new AccessBackupHandler(_logger, caminhoMdb);
 
             // 1. Criar cópia de backup
             string arquivoBackup = helper.CopiarArquivoMdbParaBackup();

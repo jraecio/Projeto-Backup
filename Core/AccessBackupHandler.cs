@@ -5,22 +5,22 @@ using System.Runtime.InteropServices;
 
 namespace BackUtilsoftcom.Core
 {
-    public class AccessHelper
+    public class AccessBackupHandler
     {
-        private readonly ILogger _logger;
+        private readonly IBackupLogger _logger;
         private  string _mdbPath;
 
-        public AccessHelper(ILogger logger, string mdbPath)
+        public AccessBackupHandler(IBackupLogger logger, string mdbPath)
         {
             _logger = logger;
             _mdbPath = mdbPath;
         }
 
-        public InfoSeguranca LerDadosSeguranca()
+        public DatabaseConnectionInfo LerDadosSeguranca()
         {
             try
             {
-                _logger.Log($"📄 Lendo arquivo MDB em: {_mdbPath}");
+                _logger.Log(string.Format("📄 Lendo arquivo MDB em: {0}", _mdbPath));
 
                 if (string.IsNullOrWhiteSpace(_mdbPath))
                     throw new ArgumentException("O caminho do MDB não foi informado.");
@@ -28,8 +28,8 @@ namespace BackUtilsoftcom.Core
                 if (!File.Exists(_mdbPath))
                     throw new FileNotFoundException("Arquivo MDB não encontrado.", _mdbPath);
 
-                string connectionString =
-                    $@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={_mdbPath};";
+                string connectionString = string.Format(
+                    "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};", _mdbPath);
 
                 _logger.Log("🔌 Conectando ao banco Access...");
 
@@ -51,22 +51,22 @@ namespace BackUtilsoftcom.Core
 
                         _logger.Log("📥 Registro encontrado. Lendo dados...");
 
-                        var info = new InfoSeguranca
+                        var info = new DatabaseConnectionInfo
                         {
-                            SqlDriver = reader["SqlDriver"]?.ToString(),
-                            SqlServidor = reader["SqlServidor"]?.ToString(),
-                            SqlPorta = reader["SqlPorta"]?.ToString(),
-                            SqlBase = reader["SqlBase"]?.ToString(),
-                            SqlLogin = reader["SqlLogin"]?.ToString(),
-                            SqlSenha = reader["SqlSenha"]?.ToString()
+                            SqlDriver = reader["SqlDriver"] != null ? reader["SqlDriver"].ToString() : null,
+                            SqlServidor = reader["SqlServidor"] != null ? reader["SqlServidor"].ToString() : null,
+                            SqlPorta = reader["SqlPorta"] != null ? reader["SqlPorta"].ToString() : null,
+                            SqlBase = reader["SqlBase"] != null ? reader["SqlBase"].ToString() : null,
+                            SqlLogin = reader["SqlLogin"] != null ? reader["SqlLogin"].ToString() : null,
+                            SqlSenha = reader["SqlSenha"] != null ? reader["SqlSenha"].ToString() : null
                         };
 
                         _logger.Log("🔎 Dados carregados:");
-                        _logger.Log($"Driver:   {info.SqlDriver}");
-                        _logger.Log($"Servidor: {info.SqlServidor}");
-                        _logger.Log($"Porta:    {info.SqlPorta}");
-                        _logger.Log($"Banco:    {info.SqlBase}");
-                        _logger.Log($"Login:    {info.SqlLogin}");
+                        _logger.Log(string.Format("Driver:   {0}", info.SqlDriver));
+                        _logger.Log(string.Format("Servidor: {0}", info.SqlServidor));
+                        _logger.Log(string.Format("Porta:    {0}", info.SqlPorta));
+                        _logger.Log(string.Format("Banco:    {0}", info.SqlBase));
+                        _logger.Log(string.Format("Login:    {0}", info.SqlLogin));
                         _logger.Log("✅ Dados lidos com sucesso.");
 
                         return info;
@@ -75,22 +75,22 @@ namespace BackUtilsoftcom.Core
             }
             catch (OleDbException ex)
             {
-                _logger.Log($"❌ ERRO OLEDB: {ex.Message}");
+                _logger.Log(string.Format("❌ ERRO OLEDB: {0}", ex.Message));
                 return null;
             }
             catch (FileNotFoundException ex)
             {
-                _logger.Log($"❌ Arquivo não encontrado: {ex.FileName}");
+                _logger.Log(string.Format("❌ Arquivo não encontrado: {0}", ex.FileName));
                 return null;
             }
             catch (ArgumentException ex)
             {
-                _logger.Log($"❌ Caminho inválido: {ex.Message}");
+                _logger.Log(string.Format("❌ Caminho inválido: {0}", ex.Message));
                 return null;
             }
             catch (Exception ex)
             {
-                _logger.Log($"❌ ERRO inesperado ao ler MDB: {ex.Message}");
+                _logger.Log(string.Format("❌ ERRO inesperado ao ler MDB: {0}", ex.Message));
                 return null;
             }
         }
@@ -191,9 +191,7 @@ namespace BackUtilsoftcom.Core
                     throw new FileNotFoundException("Arquivo MDB não encontrado.", _mdbPath);
 
                 // Pasta destino
-                string pastaBackup = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "BackUtilsoftcom");
+                string pastaBackup = new BackupSettings(_logger, _mdbPath).GetBackupFolder();
 
                 // Garante que a pasta existe
                 if (!Directory.Exists(pastaBackup))
@@ -219,28 +217,28 @@ namespace BackUtilsoftcom.Core
                 // Copia o arquivo
                 File.Copy(_mdbPath, destino, overwrite: false);
 
-                _logger.Log($"✅ Arquivo copiado com sucesso para: {destino}");
+                _logger.Log(string.Format("✅ Arquivo copiado com sucesso para: {0}", destino));
 
                 return destino;
             }
             catch (FileNotFoundException ex)
             {
-                _logger.Log($"❌ Arquivo MDB não encontrado: {ex.FileName}");
+                _logger.Log(string.Format("❌ Arquivo MDB não encontrado: {0}", ex.FileName));
                 return null;
             }
             catch (IOException ex)
             {
-                _logger.Log($"❌ Erro ao copiar arquivo: {ex.Message}");
+                _logger.Log(string.Format("❌ Erro ao copiar arquivo: {0}", ex.Message));
                 return null;
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.Log($"❌ Acesso negado ao copiar o arquivo: {ex.Message}");
+                _logger.Log(string.Format("❌ Acesso negado ao copiar o arquivo: {0}", ex.Message));
                 return null;
             }
             catch (Exception ex)
             {
-                _logger.Log($"❌ Erro inesperado ao copiar MDB: {ex.Message}");
+                _logger.Log(string.Format("❌ Erro inesperado ao copiar MDB: {0}", ex.Message));
                 return null;
             }
         }

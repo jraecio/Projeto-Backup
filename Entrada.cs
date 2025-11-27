@@ -62,7 +62,7 @@ namespace BackUtilsoftcom
                         if (caminhoMdb != null && File.Exists(caminhoMdb))
                         {
                             TxLocalFront.Text = caminhoMdb;
-                            linkBkp.Text = null;
+                            LinkBkpText = null;
                         }
                         else
                         {
@@ -148,10 +148,9 @@ namespace BackUtilsoftcom
 
             btnIniciarCopia.Enabled = false;
             btnSelecionarFront.Enabled = false;
-            btnFechar.Enabled = false;
             progressBarBackup.Visible = true;
             progressBarBackup.Value = 0;
-            lblStatus.Text = "Iniciando...";
+
 
             try
             {
@@ -165,7 +164,7 @@ namespace BackUtilsoftcom
                         this.Invoke(new Action(() =>
                         {
                             progressBarBackup.Value = progress;
-                            lblStatus.Text = status;
+
                         }));
                     });
                 });
@@ -180,13 +179,12 @@ namespace BackUtilsoftcom
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao realizar backup: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                lblStatus.Text = "Erro no backup.";
+
             }
             finally
             {
                 btnIniciarCopia.Enabled = true;
                 btnSelecionarFront.Enabled = true;
-                btnFechar.Enabled = true;
                 // progressBarBackup.Visible = false; // Opcional: manter visível para mostrar 100%
             }
         }
