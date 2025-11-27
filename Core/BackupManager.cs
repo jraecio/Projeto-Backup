@@ -12,6 +12,7 @@ namespace BackUtilsoftcom
         private readonly SqlBackupService _sqlBackupService;
         private string _caminhoMdb;
         private string _caminhoPastaBackup;
+        private string _caminhoArquivoZip;
 
 
         public BackupManager(IBackupLogger logger, string caminhoMdb)
@@ -30,6 +31,11 @@ namespace BackUtilsoftcom
         {
             return _caminhoPastaBackup;
         }
+
+        public string GetArquivozip()
+        {
+            return Path.GetFileName(_caminhoArquivoZip);
+        }
         public void RealizarBackup(Action<int, string> onProgress)
         {
             if (onProgress != null) onProgress.Invoke(10, "Iniciando backup...");
@@ -47,13 +53,15 @@ namespace BackUtilsoftcom
 
             if (onProgress != null) onProgress.Invoke(40, "Backup do Access concluído.");
 
-            // 2. Backup do SQL Server com base nas informações lidas do Access
             if (onProgress != null) onProgress.Invoke(50, "Iniciando backup do SQL Server...");
             _sqlBackupService.ExecutarBackup(infoSeguranca, _caminhoPastaBackup);
-            if (onProgress != null) onProgress.Invoke(70, "Backup do SQL Server concluído.");
+            if (onProgress != null) onProgress.Invoke(65, "Backup do SQL Server concluído.");
 
-            if (onProgress != null) onProgress.Invoke(80, "Compactando arquivos...");
+            if (onProgress != null) onProgress.Invoke(75, "Compactando arquivos...");
             CompactarTudoEmZip(_caminhoMdb);
+
+            if (onProgress != null) onProgress.Invoke(75, "Enviando arquivos para nuvem...");
+             enviarCloudflire();
 
             _logger.Log("✅ Backup Finalizado.");
             if (onProgress != null) onProgress.Invoke(100, "Backup Finalizado!");
@@ -64,10 +72,7 @@ namespace BackUtilsoftcom
             try
             {
                 _logger.Log("📦 Iniciando compactação completa em ZIP...");
-
-                
-        
-
+ 
                 if (!Directory.Exists(_caminhoPastaBackup))
                     Directory.CreateDirectory(_caminhoPastaBackup);
 
@@ -81,7 +86,7 @@ namespace BackUtilsoftcom
                 string pastaPai = parentInfo.FullName;
 
                 // 📁 Caminho do arquivo ZIP no mesmo nível da pasta
-                string arquivoZip = Path.Combine(
+                _caminhoArquivoZip = Path.Combine(
                     pastaPai,
                     string.Format("BackUtilsoftcom_{0:ddMMyy_HHmmss}.zip", DateTime.Now)
                 );
@@ -89,17 +94,36 @@ namespace BackUtilsoftcom
                 _logger.Log(string.Format("🔍 Compactando conteúdo da pasta: {0}", _caminhoPastaBackup));
 
                 // Cria o arquivo zip
-                ZipFile.CreateFromDirectory(_caminhoPastaBackup, arquivoZip, CompressionLevel.Optimal, includeBaseDirectory: false);
+                ZipFile.CreateFromDirectory(_caminhoPastaBackup, _caminhoArquivoZip, CompressionLevel.Optimal, includeBaseDirectory: false);
 
                 _logger.Log("-------------------------------------------------");
                 _logger.Log("🎉 Compactação concluída com sucesso!");
-                _logger.Log(string.Format("📁 Arquivo gerado: {0}", arquivoZip));
+                _logger.Log(string.Format("📁 Arquivo gerado: {0}", _caminhoArquivoZip));
                 _logger.Log("-------------------------------------------------");
             }
             catch (Exception ex)
             {
                 _logger.Log("❌ ERRO ao compactar ZIP: " + ex.Message);
             }
+        }
+
+        private  void enviarCloudflire()
+        {
+            var cfg = new CloudflareConfig
+            {
+                Endpoint = "https://9f2c0aa4f354e316da08c86b629f9d13.r2.cloudflarestorage.com",
+                AccessKey = "840e62385cb5237cd41597ed899883c8",
+                SecretKey = "327cb08a3bbe820b62ff1bb2931837bbd64de0fb4227345c48c73b3b5e72b917",
+                Bucket = "upsoftware",
+                ObjectKey = $"{GetArquivozip()}",
+                FilePath = $@"{_caminhoArquivoZip}"
+            };
+
+             CloudflareApi.UploadFile(cfg);
+
+            _logger.Log("-------------------------------------------------");
+            _logger.Log("📦 arquivo salvo em nuvem");
+            _logger.Log("-------------------------------------------------");
         }
     }
 }

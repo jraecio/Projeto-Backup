@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Entrada));
             this.panelContainer = new System.Windows.Forms.Panel();
+            this.lblLinkBkp = new System.Windows.Forms.LinkLabel();
             this.progressBarBackup = new System.Windows.Forms.ProgressBar();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.picLogo = new System.Windows.Forms.PictureBox();
@@ -37,25 +38,23 @@
             this.lblLocalTx = new System.Windows.Forms.Label();
             this.TxLocalFront = new System.Windows.Forms.TextBox();
             this.btnSelecionarFront = new System.Windows.Forms.Button();
-            this.gpBoxTipoOperacao = new System.Windows.Forms.GroupBox();
-            this.rbRestaurarBackup = new System.Windows.Forms.RadioButton();
-            this.rbGerarBackup = new System.Windows.Forms.RadioButton();
             this.gpBoxIniciarCopia = new System.Windows.Forms.GroupBox();
             this.btnIniciarCopia = new System.Windows.Forms.Button();
-            this.lblLinckNuvem = new System.Windows.Forms.Label();
-            this.linkBkp = new System.Windows.Forms.LinkLabel();
+            this.lblLinckNuvem = new System.Windows.Forms.LinkLabel();
+            this.gpBoxTipoOperacao = new System.Windows.Forms.GroupBox();
+            this.chB_BackupEmNuvem = new System.Windows.Forms.CheckBox();
             this.panelContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.gpBoxLocalFront.SuspendLayout();
-            this.gpBoxTipoOperacao.SuspendLayout();
             this.gpBoxIniciarCopia.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelContainer
             // 
             this.panelContainer.BackColor = System.Drawing.Color.White;
-            this.panelContainer.Controls.Add(this.linkBkp);
+            this.panelContainer.Controls.Add(this.chB_BackupEmNuvem);
             this.panelContainer.Controls.Add(this.lblLinckNuvem);
+            this.panelContainer.Controls.Add(this.lblLinkBkp);
             this.panelContainer.Controls.Add(this.progressBarBackup);
             this.panelContainer.Controls.Add(this.txtLog);
             this.panelContainer.Controls.Add(this.picLogo);
@@ -67,6 +66,16 @@
             this.panelContainer.Size = new System.Drawing.Size(500, 420);
             this.panelContainer.TabIndex = 1;
             this.panelContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.panelContainer_Paint);
+            // 
+            // lblLinkBkp
+            // 
+            this.lblLinkBkp.AutoSize = true;
+            this.lblLinkBkp.LinkColor = System.Drawing.Color.Orange;
+            this.lblLinkBkp.Location = new System.Drawing.Point(20, 298);
+            this.lblLinkBkp.Name = "lblLinkBkp";
+            this.lblLinkBkp.Size = new System.Drawing.Size(0, 13);
+            this.lblLinkBkp.TabIndex = 1;
+            this.lblLinkBkp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkBkp_LinkClicked);
             // 
             // progressBarBackup
             // 
@@ -145,43 +154,6 @@
             this.btnSelecionarFront.UseVisualStyleBackColor = false;
             this.btnSelecionarFront.Click += new System.EventHandler(this.btnSelecionarFront_Click);
             // 
-            // gpBoxTipoOperacao
-            // 
-            this.gpBoxTipoOperacao.Controls.Add(this.rbRestaurarBackup);
-            this.gpBoxTipoOperacao.Controls.Add(this.rbGerarBackup);
-            this.gpBoxTipoOperacao.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.gpBoxTipoOperacao.ForeColor = System.Drawing.Color.DimGray;
-            this.gpBoxTipoOperacao.Location = new System.Drawing.Point(20, 150);
-            this.gpBoxTipoOperacao.Name = "gpBoxTipoOperacao";
-            this.gpBoxTipoOperacao.Size = new System.Drawing.Size(460, 60);
-            this.gpBoxTipoOperacao.TabIndex = 3;
-            this.gpBoxTipoOperacao.TabStop = false;
-            this.gpBoxTipoOperacao.Text = "Tipo de Operação";
-            // 
-            // rbRestaurarBackup
-            // 
-            this.rbRestaurarBackup.AutoSize = true;
-            this.rbRestaurarBackup.Location = new System.Drawing.Point(119, 25);
-            this.rbRestaurarBackup.Name = "rbRestaurarBackup";
-            this.rbRestaurarBackup.Size = new System.Drawing.Size(116, 19);
-            this.rbRestaurarBackup.TabIndex = 1;
-            this.rbRestaurarBackup.Text = "Restaurar Backup";
-            this.rbRestaurarBackup.UseVisualStyleBackColor = true;
-            this.rbRestaurarBackup.CheckedChanged += new System.EventHandler(this.rbTipoOperacao_CheckedChanged);
-            // 
-            // rbGerarBackup
-            // 
-            this.rbGerarBackup.AutoSize = true;
-            this.rbGerarBackup.Checked = true;
-            this.rbGerarBackup.Location = new System.Drawing.Point(20, 25);
-            this.rbGerarBackup.Name = "rbGerarBackup";
-            this.rbGerarBackup.Size = new System.Drawing.Size(95, 19);
-            this.rbGerarBackup.TabIndex = 0;
-            this.rbGerarBackup.TabStop = true;
-            this.rbGerarBackup.Text = "Gerar Backup";
-            this.rbGerarBackup.UseVisualStyleBackColor = true;
-            this.rbGerarBackup.CheckedChanged += new System.EventHandler(this.rbTipoOperacao_CheckedChanged);
-            // 
             // gpBoxIniciarCopia
             // 
             this.gpBoxIniciarCopia.Controls.Add(this.btnIniciarCopia);
@@ -212,22 +184,34 @@
             // lblLinckNuvem
             // 
             this.lblLinckNuvem.AutoSize = true;
-            this.lblLinckNuvem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblLinckNuvem.ForeColor = System.Drawing.Color.DimGray;
-            this.lblLinckNuvem.Location = new System.Drawing.Point(20, 330);
+            this.lblLinckNuvem.Location = new System.Drawing.Point(17, 325);
             this.lblLinckNuvem.Name = "lblLinckNuvem";
-            this.lblLinckNuvem.Size = new System.Drawing.Size(0, 15);
-            this.lblLinckNuvem.TabIndex = 10;
+            this.lblLinckNuvem.Size = new System.Drawing.Size(0, 13);
+            this.lblLinckNuvem.TabIndex = 11;
+            this.lblLinckNuvem.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblLinckNuvem_LinkClicked);
             // 
-            // linkBkp
+            // gpBoxTipoOperacao
             // 
-            this.linkBkp.AutoSize = true;
-            this.linkBkp.LinkColor = System.Drawing.Color.Orange;
-            this.linkBkp.Location = new System.Drawing.Point(20, 310);
-            this.linkBkp.Name = "linkBkp";
-            this.linkBkp.Size = new System.Drawing.Size(0, 13);
-            this.linkBkp.TabIndex = 1;
-            this.linkBkp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkBkp_LinkClicked);
+            this.gpBoxTipoOperacao.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.gpBoxTipoOperacao.ForeColor = System.Drawing.Color.DimGray;
+            this.gpBoxTipoOperacao.Location = new System.Drawing.Point(20, 150);
+            this.gpBoxTipoOperacao.Name = "gpBoxTipoOperacao";
+            this.gpBoxTipoOperacao.Size = new System.Drawing.Size(460, 60);
+            this.gpBoxTipoOperacao.TabIndex = 3;
+            this.gpBoxTipoOperacao.TabStop = false;
+            this.gpBoxTipoOperacao.Text = "Tipo de Operação";
+            // 
+            // chB_BackupEmNuvem
+            // 
+            this.chB_BackupEmNuvem.AutoSize = true;
+            this.chB_BackupEmNuvem.Checked = true;
+            this.chB_BackupEmNuvem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chB_BackupEmNuvem.Location = new System.Drawing.Point(35, 175);
+            this.chB_BackupEmNuvem.Name = "chB_BackupEmNuvem";
+            this.chB_BackupEmNuvem.Size = new System.Drawing.Size(117, 17);
+            this.chB_BackupEmNuvem.TabIndex = 12;
+            this.chB_BackupEmNuvem.Text = "Backup em Nuvem";
+            this.chB_BackupEmNuvem.UseVisualStyleBackColor = true;
             // 
             // Entrada
             // 
@@ -245,8 +229,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
             this.gpBoxLocalFront.ResumeLayout(false);
             this.gpBoxLocalFront.PerformLayout();
-            this.gpBoxTipoOperacao.ResumeLayout(false);
-            this.gpBoxTipoOperacao.PerformLayout();
             this.gpBoxIniciarCopia.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -259,15 +241,14 @@
         private System.Windows.Forms.Label lblLocalTx;
         private System.Windows.Forms.TextBox TxLocalFront;
         private System.Windows.Forms.Button btnSelecionarFront;
-        private System.Windows.Forms.GroupBox gpBoxTipoOperacao;
-        private System.Windows.Forms.RadioButton rbGerarBackup;
-        private System.Windows.Forms.RadioButton rbRestaurarBackup;
         private System.Windows.Forms.GroupBox gpBoxIniciarCopia;
         private System.Windows.Forms.Button btnIniciarCopia;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.PictureBox picLogo;
         private System.Windows.Forms.ProgressBar progressBarBackup;
-        private System.Windows.Forms.Label lblLinckNuvem;
-        private System.Windows.Forms.LinkLabel linkBkp;
+        private System.Windows.Forms.LinkLabel lblLinkBkp;
+        private System.Windows.Forms.LinkLabel lblLinckNuvem;
+        private System.Windows.Forms.CheckBox chB_BackupEmNuvem;
+        private System.Windows.Forms.GroupBox gpBoxTipoOperacao;
     }
 }

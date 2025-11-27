@@ -74,6 +74,8 @@
     <Compile Include="Core\AccessBackupHandler.cs" />
     <Compile Include="Core\BackupManager.cs" />
     <Compile Include="Core\BackupSettings.cs" />
+    <Compile Include="Core\CloudflareApi.cs" />
+    <Compile Include="Core\CloudflareConfig.cs" />
     <Compile Include="Core\IBackupLogger.cs" />
     <Compile Include="Core\DatabaseConnectionInfo.cs" />
     <Compile Include="Core\SqlBackupService.cs" />

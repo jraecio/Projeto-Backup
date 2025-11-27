@@ -1,13 +1,10 @@
 ﻿using BackUtilsoftcom.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+
 using System.Diagnostics;
-using System.Drawing;
+
 using System.IO;
-using System.Linq;
-using System.Text;
+
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -138,16 +135,13 @@ namespace BackUtilsoftcom
         }
 
 
-        private async void btnIniciarCopia_Click(object sender, EventArgs e)
+        private  void btnIniciarCopia_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TxLocalFront.Text))
             {
                 MessageBox.Show("Selecione o arquivo Front primeiro!", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            btnIniciarCopia.Enabled = false;
-            btnSelecionarFront.Enabled = false;
             progressBarBackup.Visible = true;
             progressBarBackup.Value = 0;
 
@@ -156,9 +150,7 @@ namespace BackUtilsoftcom
             {
                 var backup = new BackupManager(this, TxLocalFront.Text);
 
-                await Task.Run(() =>
-                {
-                    backup.RealizarBackup((progress, status) =>
+                 backup.RealizarBackup((progress, status) =>
                     {
                         // Atualiza UI na thread principal
                         this.Invoke(new Action(() =>
@@ -167,14 +159,15 @@ namespace BackUtilsoftcom
 
                         }));
                     });
-                });
+
 
                 LinkBkpText = backup.GetCaminhoPastaBackup();
 
                 if (LinkBkpText != null && LinkBkpText.Length > 55)
-                    linkBkp.Text = LinkBkpText.Substring(0, 55) + "...";
+                    lblLinkBkp.Text = LinkBkpText.Substring(0, 55) + "...";
                 else
-                    linkBkp.Text = LinkBkpText;
+                    lblLinkBkp.Text = LinkBkpText;
+                lblLinckNuvem.Text =$"https://upload-files.softcom.services/{backup.GetArquivozip()}";
             }
             catch (Exception ex)
             {
@@ -214,19 +207,11 @@ namespace BackUtilsoftcom
         {
             Application.Exit();
         }
-        private void rbTipoOperacao_CheckedChanged(object sender, EventArgs e)
+ 
+        private void lblLinckNuvem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (rbRestaurarBackup.Checked)
-            {
-                btnIniciarCopia.Text = "RESTAURAR BACKUP";
-                gpBoxLocalFront.Text = "Destino do Arquivo (Pasta)";
-            }
-            else
-            {
-                btnIniciarCopia.Text = "INICIAR BACKUP";
-                gpBoxLocalFront.Text = "Origem dos Dados";
-            }
+            Clipboard.SetText(lblLinckNuvem.Text);
+            MessageBox.Show("Linck Copiado!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
     }
 }
