@@ -166,8 +166,11 @@ namespace BackUtilsoftcom
                 if (LinkBkpText != null && LinkBkpText.Length > 55)
                     lblLinkBkp.Text = LinkBkpText.Substring(0, 55) + "...";
                 else
-                    lblLinkBkp.Text = LinkBkpText;
-                lblLinckNuvem.Text =$"https://upload-files.softcom.services/{backup.GetArquivozip()}";
+                lblLinkBkp.Text = LinkBkpText;
+
+                if (chB_BackupEmNuvem.Checked) { 
+                    lblLinckNuvem.Text =$"https://upload-files.softcom.services/{backup.GetArquivozip()}";
+                }
             }
             catch (Exception ex)
             {
