@@ -1,10 +1,7 @@
-﻿using BackUtilsoftcom.Core;
+﻿using BackupUtilSoftcom;
 using System;
-
 using System.Diagnostics;
-
 using System.IO;
-
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,10 +16,6 @@ namespace BackUtilsoftcom
             InitializeComponent();
         }
 
-        private void panelContainer_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
         public void Log(string s)
         {
             if (InvokeRequired)
@@ -30,7 +23,6 @@ namespace BackUtilsoftcom
             else
                 txtLog.AppendText(string.Format("{0:T} {1}\r\n", DateTime.Now, s));
         }
-
         private void btnSelecionarFront_Click(object sender, EventArgs e)
         {
             try
@@ -103,7 +95,6 @@ namespace BackUtilsoftcom
             }
         }
 
-
         private string ExtrairCaminhoMdb(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -133,7 +124,6 @@ namespace BackUtilsoftcom
 
             return null;
         }
-
 
         private async void btnIniciarCopia_Click(object sender, EventArgs e)
         {
@@ -185,7 +175,6 @@ namespace BackUtilsoftcom
             }
         }
 
-
         private void linkBkp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             // Caminho da pasta que você quer abrir:
@@ -205,10 +194,7 @@ namespace BackUtilsoftcom
             }
 
         }
-        private void btnFechar_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+   
         private void lblLinckNuvem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Clipboard.SetText(lblLinckNuvem.Text);
