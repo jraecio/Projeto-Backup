@@ -67,7 +67,7 @@ namespace BackupUtilSoftcom
                     _logger.Log(string.Format("Arquivo de destino: {0}", caminhoArquivo));
 
                     string sqlCommand =
-                        string.Format("BACKUP DATABASE [{0}] TO DISK = '{1}' WITH INIT, SKIP, STATS = 10;", info.SqlBase, caminhoArquivo);
+                        string.Format("BACKUP DATABASE [{0}] TO DISK = '{1}' WITH COPY_ONLY,INIT, SKIP, STATS = 10;", info.SqlBase, caminhoArquivo);
 
                     _logger.Log("Executando comando BACKUP DATABASE...");
 
